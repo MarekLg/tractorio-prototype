@@ -12,6 +12,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class PrometeoCarController : MonoBehaviour
@@ -132,6 +133,9 @@ public class PrometeoCarController : MonoBehaviour
       public bool isTractionLocked; // Used to know whether the traction of the car is locked or not.
 
     //PRIVATE VARIABLES
+    
+    private InputAction move;
+    private InputAction jump;
 
       /*
       IMPORTANT: The following variables should not be modified manually since their values are automatically given via script.
@@ -260,6 +264,8 @@ public class PrometeoCarController : MonoBehaviour
           }
         }
 
+        move = InputSystem.actions.FindAction("Move");
+        jump = InputSystem.actions.FindAction("Jump");
     }
 
     // Update is called once per frame
@@ -327,39 +333,41 @@ public class PrometeoCarController : MonoBehaviour
 
       }else{
 
-        if(Input.GetKey(KeyCode.W)){
+        var movement = move.ReadValue<Vector2>();
+        
+        if(movement.y > 0){
           CancelInvoke("DecelerateCar");
           deceleratingCar = false;
           GoForward();
         }
-        if(Input.GetKey(KeyCode.S)){
+        if(movement.y < 0){
           CancelInvoke("DecelerateCar");
           deceleratingCar = false;
           GoReverse();
         }
 
-        if(Input.GetKey(KeyCode.A)){
+        if(movement.x < 0){
           TurnLeft();
         }
-        if(Input.GetKey(KeyCode.D)){
+        if(movement.x > 0){
           TurnRight();
         }
-        if(Input.GetKey(KeyCode.Space)){
+        if(jump.IsPressed()){
           CancelInvoke("DecelerateCar");
           deceleratingCar = false;
           Handbrake();
         }
-        if(Input.GetKeyUp(KeyCode.Space)){
+        if(jump.WasReleasedThisFrame()){
           RecoverTraction();
         }
-        if((!Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.W))){
+        if(Mathf.Approximately(movement.y, 0)){
           ThrottleOff();
         }
-        if((!Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.W)) && !Input.GetKey(KeyCode.Space) && !deceleratingCar){
+        if(Mathf.Approximately(movement.y, 0) && !jump.IsPressed() && !deceleratingCar){
           InvokeRepeating("DecelerateCar", 0f, 0.1f);
           deceleratingCar = true;
         }
-        if(!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D) && steeringAxis != 0f){
+        if(Mathf.Approximately(movement.x, 0) && steeringAxis != 0f){
           ResetSteeringAngle();
         }
 
