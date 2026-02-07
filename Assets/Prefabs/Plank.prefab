@@ -92,13 +92,21 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+<<<<<<< HEAD
 --- !u!65 &8947902099775073165
+=======
+--- !u!65 &5476381574671939696
+>>>>>>> 8d0dd052d271be28ed095050d2f642c821b1d86d
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+<<<<<<< HEAD
   m_GameObject: {fileID: 7728149021676359974}
+=======
+  m_GameObject: {fileID: 6622325079221008364}
+>>>>>>> 8d0dd052d271be28ed095050d2f642c821b1d86d
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -113,6 +121,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+<<<<<<< HEAD
 --- !u!54 &8732441362081295592
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -140,3 +149,5 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
+=======
+>>>>>>> 8d0dd052d271be28ed095050d2f642c821b1d86d
