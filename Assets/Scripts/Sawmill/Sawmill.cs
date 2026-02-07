@@ -39,9 +39,24 @@ public class Sawmill : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!isProcessing && other.CompareTag(treeTag))
+        if (isProcessing) return;
+
+        Transform currentObj = other.transform;
+        GameObject foundLog = null;
+
+        while (currentObj != null)
         {
-            StartCoroutine(ProcessLogRoutine(other.gameObject));
+            if (currentObj.CompareTag(treeTag))
+            {
+                foundLog = currentObj.gameObject;
+                break; 
+            }
+            currentObj = currentObj.parent;
+        }
+
+        if (foundLog != null)
+        {
+            StartCoroutine(ProcessLogRoutine(foundLog));
         }
     }
 
@@ -50,9 +65,16 @@ public class Sawmill : MonoBehaviour
         isProcessing = true;
 
         Rigidbody logRb = logObject.GetComponent<Rigidbody>();
-        Collider logCol = logObject.GetComponent<Collider>();
+        
+        Collider[] allColliders = logObject.GetComponentsInChildren<Collider>();
+
         if (logRb) logRb.isKinematic = true; 
-        if (logCol) logCol.enabled = false; 
+        
+        // Alle Collider (auch die im Child "Model") ausschalten
+        foreach(Collider col in allColliders)
+        {
+            col.enabled = false;
+        }
 
         if (logObject != null)
         {
@@ -83,6 +105,7 @@ public class Sawmill : MonoBehaviour
             if (logObject != null)
             {
                 float progress = processTimer / totalProcessTime;
+                // Wir bewegen hier den gesamten "Log"-Parent
                 logObject.transform.position = Vector3.Lerp(fixedStartPos, fixedEndPos, progress);
             }
 
