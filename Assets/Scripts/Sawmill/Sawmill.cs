@@ -15,7 +15,6 @@ public class Sawmill : MonoBehaviour
     public GameObject plankPrefab;
     public Transform outputPoint;
     
-    // WICHTIG: Rotiere dieses Objekt im Editor so, wie der Baum liegen soll (z.B. Z = 90)
     public Transform logStartPoint; 
     public Transform logEndPoint; 
     
@@ -28,7 +27,6 @@ public class Sawmill : MonoBehaviour
 
     void Update()
     {
-        // Klingen drehen
         if (currentSpeed > 0.1f)
         {
             foreach (Transform blade in blades)
@@ -51,21 +49,17 @@ public class Sawmill : MonoBehaviour
     {
         isProcessing = true;
 
-        // 1. Physik sofort ausschalten
         Rigidbody logRb = logObject.GetComponent<Rigidbody>();
         Collider logCol = logObject.GetComponent<Collider>();
         if (logRb) logRb.isKinematic = true; 
         if (logCol) logCol.enabled = false; 
 
-        // 2. HARD SNAP: Baum sofort auf Startposition und -rotation setzen
-        // Er übernimmt exakt die Rotation von deinem "LogStartPoint" Objekt
         if (logObject != null)
         {
             logObject.transform.position = logStartPoint.position;
             logObject.transform.rotation = logStartPoint.rotation;
         }
 
-        // 3. RAMP UP: Warten bis Sägen auf Touren sind (Baum bewegt sich noch nicht)
         float timer = 0f;
         while (timer < rampUpDuration)
         {
@@ -75,12 +69,10 @@ public class Sawmill : MonoBehaviour
         }
         currentSpeed = maxRotationSpeed;
 
-        // 4. DURCHZIEHEN: Jetzt bewegt er sich vom Start zum Ende
         float totalProcessTime = planksPerLog * timeBetweenPlanks;
         float processTimer = 0f;
         int planksSpawned = 0;
 
-        // Sicherheits-Update der Startposition
         Vector3 fixedStartPos = logStartPoint.position;
         Vector3 fixedEndPos = logEndPoint.position;
 
@@ -91,11 +83,9 @@ public class Sawmill : MonoBehaviour
             if (logObject != null)
             {
                 float progress = processTimer / totalProcessTime;
-                // Lineare Bewegung von A nach B
                 logObject.transform.position = Vector3.Lerp(fixedStartPos, fixedEndPos, progress);
             }
 
-            // Bretter spawnen
             if (processTimer >= (planksSpawned + 1) * timeBetweenPlanks)
             {
                 SpawnPlank();
@@ -105,10 +95,8 @@ public class Sawmill : MonoBehaviour
             yield return null; 
         }
 
-        // 5. AUFRÄUMEN
         if (logObject != null) Destroy(logObject); 
 
-        // 6. RUNTERFAHREN
         timer = 0f;
         while (timer < rampDownDuration)
         {
