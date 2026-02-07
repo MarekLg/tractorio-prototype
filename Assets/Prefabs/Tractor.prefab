@@ -40,7 +40,7 @@ WheelCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 905441148794462021}
   serializedVersion: 2
-  m_Center: {x: 0.15, y: 0.15, z: 0}
+  m_Center: {x: 0, y: 0.15, z: 0}
   m_Radius: 0.3
   m_SuspensionSpring:
     spring: 35000
@@ -471,7 +471,7 @@ WheelCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3701844498194407838}
   serializedVersion: 2
-  m_Center: {x: -0.21, y: 0.15, z: 0}
+  m_Center: {x: 0, y: 0.15, z: 0}
   m_Radius: 0.5
   m_SuspensionSpring:
     spring: 35000
@@ -827,9 +827,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5024602514900138990}
   - component: {fileID: 5595027395036341771}
-  - component: {fileID: 9133569903668920074}
+  - component: {fileID: 6933761343081303614}
   m_Layer: 0
-  m_Name: Saw
+  m_Name: Selector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -871,7 +871,7 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.4
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &9133569903668920074
+--- !u!114 &6933761343081303614
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -880,72 +880,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 6131596054956483943}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 192f4769b65347cfb72143475e22ba57, type: 3}
+  m_Script: {fileID: 11500000, guid: d04d81851ddf4d609fedca2ee64c517b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Sawer
-  sawSeconds: 2
-  saw:
-    m_Name: Saw
-    m_Type: 0
-    m_ExpectedControlType: 
-    m_Id: a4a1f3be-f6e2-4fb2-b14c-53b1e1666f21
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings:
-    - m_Name: 
-      m_Id: 0dab7628-fa0c-4c0a-94e1-3e3514ca913e
-      m_Path: <Keyboard>/e
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Saw
-      m_Flags: 0
-    m_Flags: 0
-  startSaw:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5584730484415240585}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-  stopSaw:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5584730484415240585}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  updateSawPercent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3618145238940286347}
-        m_TargetAssemblyTypeName: SetWidth, Assembly-CSharp
-        m_MethodName: Set
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  m_EditorClassIdentifier: Assembly-CSharp::LogSelector
 --- !u!1 &6495218570342489132
 GameObject:
   m_ObjectHideFlags: 0
@@ -986,7 +923,7 @@ WheelCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6495218570342489132}
   serializedVersion: 2
-  m_Center: {x: -0.15, y: 0.15, z: 0}
+  m_Center: {x: 0, y: 0.15, z: 0}
   m_Radius: 0.3
   m_SuspensionSpring:
     spring: 35000
@@ -1206,6 +1143,8 @@ GameObject:
   - component: {fileID: 2881990782110173057}
   - component: {fileID: 4204986610105918707}
   - component: {fileID: 7706989476780731549}
+  - component: {fileID: 3671216216494935154}
+  - component: {fileID: 7487918228232364687}
   m_Layer: 0
   m_Name: Tractor
   m_TagString: Untagged
@@ -1306,6 +1245,111 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 1
+--- !u!114 &3671216216494935154
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7360079051018868581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 192f4769b65347cfb72143475e22ba57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Sawer
+  sawSeconds: 2
+  saw:
+    m_Name: Saw
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: a4a1f3be-f6e2-4fb2-b14c-53b1e1666f21
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 0dab7628-fa0c-4c0a-94e1-3e3514ca913e
+      m_Path: <Keyboard>/e
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Saw
+      m_Flags: 0
+    m_Flags: 0
+  startSaw:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5584730484415240585}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+  stopSaw:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5584730484415240585}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  updateSawPercent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3618145238940286347}
+        m_TargetAssemblyTypeName: SetWidth, Assembly-CSharp
+        m_MethodName: Set
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &7487918228232364687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7360079051018868581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21d42b3883984160895287751e45a3a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Grabber
+  offset: {x: 0, y: 0.3, z: 1.35}
+  grab:
+    m_Name: Grab
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: e9578c65-cd60-4209-95ae-6ac79889550e
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 8632dfd2-770b-4a12-8848-ccd994194c69
+      m_Path: <Keyboard>/r
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Grab
+      m_Flags: 0
+    m_Flags: 0
 --- !u!1 &8536818883498588777
 GameObject:
   m_ObjectHideFlags: 0
@@ -1399,7 +1443,7 @@ WheelCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8984313933929375031}
   serializedVersion: 2
-  m_Center: {x: 0.21, y: 0.15, z: 0}
+  m_Center: {x: 0, y: 0.15, z: 0}
   m_Radius: 0.5
   m_SuspensionSpring:
     spring: 35000
