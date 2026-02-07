@@ -888,6 +888,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tractor
       objectReference: {fileID: 0}
+    - target: {fileID: 7487918228232364687, guid: f3e0e75b2058544b6ac1c8240a937849, type: 3}
+      propertyPath: offset.z
+      value: 1.4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

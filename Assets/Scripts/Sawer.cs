@@ -1,10 +1,11 @@
 using System;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(SphereCollider))]
+[RequireComponent(typeof(Rigidbody))]
 public sealed class Sawer: MonoBehaviour
 {
     [SerializeField] private float sawSeconds = 5.0f;
@@ -17,58 +18,43 @@ public sealed class Sawer: MonoBehaviour
     [SerializeField] private UnityEvent stopSaw;
     [SerializeField] private UnityEvent<float> updateSawPercent;
 
-    private Log selectedLog;
-    private Coroutine sawCoroutine;
-
-    private void OnValidate()
-    {
-        GetComponent<SphereCollider>().isTrigger = true;
-        
-        saw.Enable();
-    }
+    private LogSelector _logSelector;
+    private Coroutine _sawCoroutine;
+    private Grabber _grabber;
 
 
     private void Awake()
     {
-        saw.performed += _ => sawCoroutine = StartCoroutine(Saw());
+        _logSelector = GetComponentInChildren<LogSelector>();
+        _grabber = GetComponent<Grabber>();
+        
+        saw.Enable();
+        saw.performed += _ => _sawCoroutine = StartCoroutine(Saw());
         saw.canceled += _ =>
         {
-            if (sawCoroutine == null) return;
+            if (_sawCoroutine == null) return;
 
             Debug.Log("Saw Cancelled");
             
-            StopCoroutine(sawCoroutine);
-            sawCoroutine = null;
+            StopCoroutine(_sawCoroutine);
+            _sawCoroutine = null;
         };
     }
 
 
-    private void OnTriggerEnter(Collider other)
+    private Log FindSawableLog()
     {
-        var log = other.GetComponentInParent<Log>();
-        if (log && !log.Sawed)
-        {
-            selectedLog = log;
-        }
+        return _logSelector.Logs.FirstOrDefault(log => !log.Sawed);
     }
-
-    private void OnTriggerExit(Collider other)
-    {
-        var log = other.GetComponentInParent<Log>();
-        if (log == selectedLog)
-        {
-            selectedLog = null;
-        }
-    }
-
 
     private IEnumerator Saw()
     {
         Debug.Log("Saw Performed");
 
-        if (!selectedLog)
+        var log = FindSawableLog();
+        if (!log)
         {
-            sawCoroutine = null;
+            _sawCoroutine = null;
             yield break;
         }
         
@@ -88,25 +74,26 @@ public sealed class Sawer: MonoBehaviour
         
         stopSaw.Invoke();
         
-        SawLog(selectedLog);
-        selectedLog.Saw();
-        selectedLog = null;
+        SawLog(log);
         
-        sawCoroutine = null;
+        _sawCoroutine = null;
         
         Debug.Log("Saw Completed");
     }
 
-    private static void SawLog(Log log)
+    private void SawLog(Log log)
     {
-        var rigidbody = log.GetComponent<Rigidbody>();
+        log.Rigidbody.useGravity = true;
+        log.Rigidbody.isKinematic = false;
+
+        log.Rigidbody.AddForce(Vector3.up * 20, ForceMode.Impulse);
+        log.Rigidbody.AddTorque(Vector3.right * 10, ForceMode.Impulse);
         
-        rigidbody.useGravity = true;
-        rigidbody.isKinematic = false;
-        
-        rigidbody.AddForce(Vector3.up * 20, ForceMode.Impulse);
-        rigidbody.AddTorque(Vector3.right * 10, ForceMode.Impulse);
-        
-        // TODO: initiate Grab
+        log.Saw();
+
+        if (_grabber)
+        {
+            _grabber.Grab(log);
+        }
     }
 }
