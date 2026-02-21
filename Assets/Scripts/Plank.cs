@@ -1,247 +1,91 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class StackBridge : MonoBehaviour
-{
-    public Plank masterPlank;
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (masterPlank != null)
-        {
-            masterPlank.TryMerge(collision.collider);
-        }
-    }
-}
-
 public class Plank : MonoBehaviour
 {
     [Header("Einstellungen")]
-    public int maxCapacity = 9;
-    public float spacing = 0.005f;
+    [Tooltip("Box Prefab")]
+    public GameObject boxPrefab; 
+    
+    [Tooltip("Min Planks for Box")]
+    public int planksNeededForBox = 4;
 
-    [Header("Status (Read Only)")]
-    public List<Transform> stackParts = new List<Transform>();
-    public Transform myAnchor;
+    [Header("Status")]
     public bool isMaster = true;
+    public List<Plank> groupedPlanks = new List<Plank>();
 
-    private Rigidbody rb;
-    private BoxCollider myCollider;
-    private Vector3 singlePlankSize;
+    private bool hasConverted = false;
 
     void Start()
     {
-        CalculateDimensions();
-        rb = GetComponent<Rigidbody>();
-        myCollider = GetComponent<BoxCollider>();
-
-        if (stackParts.Count == 0)
+        if (!groupedPlanks.Contains(this))
         {
-            stackParts.Add(this.transform);
+            groupedPlanks.Add(this);
         }
-    }
-
-    private void CalculateDimensions()
-    {
-        if (myCollider == null) myCollider = GetComponent<BoxCollider>();
-        
-        if (myCollider != null)
-        {
-            singlePlankSize = Vector3.Scale(myCollider.size, transform.localScale);
-        }
-        else
-        {
-            var rend = GetComponentInChildren<Renderer>();
-            if (rend) singlePlankSize = rend.bounds.size;
-        }
-
-        float[] s = { singlePlankSize.x, singlePlankSize.y, singlePlankSize.z };
-        System.Array.Sort(s);
-        singlePlankSize.y = s[0];
-        singlePlankSize.x = s[1];
-        singlePlankSize.z = s[2];
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        TryMerge(collision.collider);
+        TryMerge(collision.collider.GetComponent<Plank>());
     }
 
-    private void OnTriggerEnter(Collider other)
+    public void TryMerge(Plank otherPlank)
     {
-        TryMerge(other);
-    }
+        if (otherPlank == null || otherPlank == this || hasConverted || otherPlank.hasConverted) return;
 
-    public void TryMerge(Collider other)
-    {
-        if (!isMaster) return;
-
-        Plank otherPlank = other.GetComponentInParent<Plank>();
-
-        if (otherPlank == null)
+        if (this.isMaster && otherPlank.isMaster)
         {
-            StackBridge bridge = other.GetComponentInParent<StackBridge>();
-            if (bridge != null) otherPlank = bridge.masterPlank;
-        }
-
-        if (otherPlank != null && otherPlank != this && otherPlank.isMaster)
-        {
-            if (this.stackParts.Count >= otherPlank.stackParts.Count && 
-                (this.stackParts.Count + otherPlank.stackParts.Count <= maxCapacity))
+            foreach (Plank p in otherPlank.groupedPlanks)
             {
-                MergeLogic(otherPlank);
-            }
-        }
-    }
-
-    public void MergeLogic(Plank otherMaster)
-    {
-        if (myAnchor == null)
-        {
-            CreateAnchor();
-        }
-
-        List<Transform> incomingParts = new List<Transform>(otherMaster.stackParts);
-        
-        if (otherMaster.myAnchor != null) Destroy(otherMaster.myAnchor.gameObject);
-
-        foreach (Transform part in incomingParts)
-        {
-            if (part == null) continue;
-
-            Plank script = part.GetComponent<Plank>();
-            if (script != null)
-            {
-                script.isMaster = false;
-                script.rb = null;
-            }
-
-            Destroy(part.GetComponent<Rigidbody>());
-            
-            Collider c = part.GetComponent<Collider>();
-            if (c) c.enabled = false;
-
-            part.SetParent(myAnchor);
-            
-            part.localScale = this.transform.localScale; 
-            part.localRotation = Quaternion.identity;
-
-            if (!stackParts.Contains(part)) stackParts.Add(part);
-        }
-
-        otherMaster.stackParts.Clear();
-
-        ArrangeStack();
-        UpdateAnchorHitbox();
-    }
-
-    private void CreateAnchor()
-    {
-        GameObject anchorGO = new GameObject("Stack_Anchor_" + name);
-        anchorGO.transform.position = this.transform.position;
-        anchorGO.transform.rotation = this.transform.rotation;
-        anchorGO.transform.localScale = Vector3.one;
-
-        myAnchor = anchorGO.transform;
-
-        if (rb) Destroy(rb);
-        if (myCollider) myCollider.enabled = false;
-
-        this.transform.SetParent(myAnchor);
-        this.transform.localPosition = Vector3.zero;
-        this.transform.localRotation = Quaternion.identity;
-
-        Rigidbody anchorRb = anchorGO.AddComponent<Rigidbody>();
-        anchorRb.mass = 10f;
-
-        BoxCollider anchorCol = anchorGO.AddComponent<BoxCollider>();
-        
-        StackBridge bridge = anchorGO.AddComponent<StackBridge>();
-        bridge.masterPlank = this;
-    }
-
-    private void ArrangeStack()
-    {
-        float w = singlePlankSize.x + spacing;
-        float h = singlePlankSize.y;
-
-        for (int i = 0; i < stackParts.Count; i++)
-        {
-            Transform part = stackParts[i];
-
-            int layer = i / 3;     
-            int posInLayer = i % 3; 
-
-            float yPos = layer * h;
-            
-            float linearOffset = posInLayer * -w;
-
-            Vector3 targetPos;
-            Quaternion targetRot;
-
-            if (layer % 2 == 0) 
-            {
-                targetPos = new Vector3(linearOffset, yPos, 0);
-                targetRot = Quaternion.identity;
-            }
-            else 
+                if (!this.groupedPlanks.Contains(p))
                 {
-                    float centerShift = -w; 
-
-                float xPos = centerShift;
-
-                float zPos = w + linearOffset; 
-
-                targetPos = new Vector3(xPos, yPos, zPos);
-                targetRot = Quaternion.Euler(0, 90, 0);
+                    this.groupedPlanks.Add(p);
+                    p.isMaster = false; 
+                }
             }
+            
+            otherPlank.groupedPlanks.Clear();
 
-            part.localPosition = targetPos;
-            part.localRotation = targetRot;
+            CheckForBoxSpawn();
         }
     }
 
-    private void UpdateAnchorHitbox()
+    private void CheckForBoxSpawn()
     {
-        if (myAnchor == null) return;
-
-        BoxCollider anchorCol = myAnchor.GetComponent<BoxCollider>();
-        Rigidbody anchorRb = myAnchor.GetComponent<Rigidbody>();
-
-        Bounds bounds = new Bounds(Vector3.zero, Vector3.zero);
-        bool hasBounds = false;
-
-        foreach (Transform child in stackParts)
+        if (groupedPlanks.Count >= planksNeededForBox)
         {
-            if (child == null) continue;
+            hasConverted = true;
 
-            Vector3 center = child.localPosition;
-            
-            bool isRotated = (Mathf.Abs(child.localEulerAngles.y - 90) < 1f);
-            
-            Vector3 size = isRotated 
-                ? new Vector3(singlePlankSize.z, singlePlankSize.y, singlePlankSize.x) 
-                : singlePlankSize;
-
-            Bounds childBounds = new Bounds(center, size);
-
-            if (!hasBounds)
+            if (boxPrefab != null)
             {
-                bounds = childBounds;
-                hasBounds = true;
+                Vector3 centerPos = Vector3.zero;
+                for (int i = 0; i < planksNeededForBox; i++)
+                {
+                    centerPos += groupedPlanks[i].transform.position;
+                }
+                centerPos /= (float)planksNeededForBox;
+
+                GameObject newBox = Instantiate(boxPrefab, centerPos, Quaternion.identity);
+                Box boxScript = newBox.GetComponent<Box>();
+                
+                if (boxScript != null)
+                {
+                    boxScript.InitBox(planksNeededForBox);
+                }
             }
             else
             {
-                bounds.Encapsulate(childBounds);
+                Debug.LogWarning("Box Prefab fehlt im Plank Skript!");
+            }
+
+            for (int i = 0; i < planksNeededForBox; i++)
+            {
+                if (groupedPlanks[i] != null)
+                {
+                    groupedPlanks[i].hasConverted = true;
+                    Destroy(groupedPlanks[i].gameObject);
+                }
             }
         }
-
-        if (hasBounds)
-        {
-            anchorCol.center = bounds.center;
-            anchorCol.size = bounds.size;
-        }
-
-        if (anchorRb) anchorRb.mass = stackParts.Count * 2f;
     }
 }
