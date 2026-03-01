@@ -11,11 +11,12 @@ something useful for your game. Best regards, Mena.
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class PrometeoCarController : MonoBehaviour
+public class PrometeoCarController : NetworkBehaviour
 {
 
     //CAR SETUP
@@ -271,6 +272,9 @@ public class PrometeoCarController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+      if (!IsLocalPlayer) return;
+      
+      // TODO: fix networked movement
 
       //CAR DATA
 
