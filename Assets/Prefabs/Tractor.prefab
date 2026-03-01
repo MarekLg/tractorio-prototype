@@ -1141,13 +1141,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2881990782110173057}
+  - component: {fileID: 836231223416639472}
   - component: {fileID: 4204986610105918707}
   - component: {fileID: 7706989476780731549}
   - component: {fileID: 3671216216494935154}
   - component: {fileID: 7487918228232364687}
-  - component: {fileID: 836231223416639472}
   - component: {fileID: 1133741338154429779}
   - component: {fileID: 878665955622956736}
+  - component: {fileID: 9096583327855693227}
   m_Layer: 0
   m_Name: Tractor
   m_TagString: Untagged
@@ -1173,6 +1174,31 @@ Transform:
   - {fileID: 535914026565270785}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &836231223416639472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7360079051018868581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 1142774353
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &4204986610105918707
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1185,6 +1211,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0fefceefe666bb4682b272ec8c5bdd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp-firstpass::PrometeoCarController
+  ShowTopMostFoldoutHeaderGroup: 1
   maxSpeed: 90
   maxReverseSpeed: 45
   accelerationMultiplier: 2
@@ -1353,31 +1380,6 @@ MonoBehaviour:
       m_Action: Grab
       m_Flags: 0
     m_Flags: 0
---- !u!114 &836231223416639472
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7360079051018868581}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 0
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
 --- !u!114 &1133741338154429779
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1441,6 +1443,19 @@ MonoBehaviour:
   UseRigidBodyForMotion: 1
   AutoUpdateKinematicState: 1
   AutoSetKinematicOnDespawn: 1
+--- !u!114 &9096583327855693227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7360079051018868581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7713c2fcc01947c3a707e56efff52fd2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraTarget
+  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!1 &8536818883498588777
 GameObject:
   m_ObjectHideFlags: 0
