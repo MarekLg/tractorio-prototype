@@ -12,6 +12,7 @@ public class Plank : MonoBehaviour
 
     [Header("Status")]
     public bool isMaster = true;
+    public Plank myMaster;
     public List<Plank> groupedPlanks = new List<Plank>();
 
     private bool hasConverted = false;
@@ -29,6 +30,30 @@ public class Plank : MonoBehaviour
         TryMerge(collision.collider.GetComponent<Plank>());
     }
 
+    private void OnCollisionExit(Collision collision)
+    {
+        Plank otherPlank = collision.collider.GetComponent<Plank>();
+
+        if (otherPlank != null)
+        {
+            if (!this.isMaster && this.myMaster == otherPlank)
+            {
+                this.myMaster.groupedPlanks.Remove(this); 
+                this.isMaster = true;                    
+                this.myMaster = null;                     
+                this.groupedPlanks.Add(this);             
+            }
+            
+            else if (this.isMaster && otherPlank.myMaster == this)
+            {
+                this.groupedPlanks.Remove(otherPlank);
+                otherPlank.isMaster = true;
+                otherPlank.myMaster = null;
+                otherPlank.groupedPlanks.Add(otherPlank);
+            }
+        }
+    }
+
     public void TryMerge(Plank otherPlank)
     {
         if (otherPlank == null || otherPlank == this || hasConverted || otherPlank.hasConverted) return;
@@ -41,6 +66,8 @@ public class Plank : MonoBehaviour
                 {
                     this.groupedPlanks.Add(p);
                     p.isMaster = false; 
+
+                    p.myMaster = this;
                 }
             }
             
