@@ -134,9 +134,6 @@ public class PrometeoCarController : NetworkBehaviour
       public bool isTractionLocked; // Used to know whether the traction of the car is locked or not.
 
     //PRIVATE VARIABLES
-    
-    private InputAction move;
-    private InputAction jump;
 
       /*
       IMPORTANT: The following variables should not be modified manually since their values are automatically given via script.
@@ -147,7 +144,6 @@ public class PrometeoCarController : NetworkBehaviour
       float driftingAxis;
       float localVelocityZ;
       float localVelocityX;
-      bool deceleratingCar;
       bool touchControlsSetup = false;
       /*
       The following variables are used to store information about sideways friction of the wheels (such as
@@ -162,6 +158,9 @@ public class PrometeoCarController : NetworkBehaviour
       float RLWextremumSlip;
       WheelFrictionCurve RRwheelFriction;
       float RRWextremumSlip;
+
+
+      public float SteeringAxes => steeringAxis;
 
     // Start is called before the first frame update
     void Start()
@@ -264,9 +263,6 @@ public class PrometeoCarController : NetworkBehaviour
             Debug.LogWarning(ex);
           }
         }
-
-        move = InputSystem.actions.FindAction("Move");
-        jump = InputSystem.actions.FindAction("Jump");
     }
 
     // Update is called once per frame
@@ -274,8 +270,6 @@ public class PrometeoCarController : NetworkBehaviour
     {
       if (!IsLocalPlayer) return;
       
-      // TODO: fix networked movement
-
       //CAR DATA
 
       // We determine the speed of the car.
@@ -284,100 +278,7 @@ public class PrometeoCarController : NetworkBehaviour
       localVelocityX = transform.InverseTransformDirection(carRigidbody.linearVelocity).x;
       // Save the local velocity of the car in the z axis. Used to know if the car is going forward or backwards.
       localVelocityZ = transform.InverseTransformDirection(carRigidbody.linearVelocity).z;
-
-      //CAR PHYSICS
-
-      /*
-      The next part is regarding to the car controller. First, it checks if the user wants to use touch controls (for
-      mobile devices) or analog input controls (WASD + Space).
-
-      The following methods are called whenever a certain key is pressed. For example, in the first 'if' we call the
-      method GoForward() if the user has pressed W.
-
-      In this part of the code we specify what the car needs to do if the user presses W (throttle), S (reverse),
-      A (turn left), D (turn right) or Space bar (handbrake).
-      */
-      if (useTouchControls && touchControlsSetup){
-
-        if(throttlePTI.buttonPressed){
-          CancelInvoke("DecelerateCar");
-          deceleratingCar = false;
-          GoForward();
-        }
-        if(reversePTI.buttonPressed){
-          CancelInvoke("DecelerateCar");
-          deceleratingCar = false;
-          GoReverse();
-        }
-
-        if(turnLeftPTI.buttonPressed){
-          TurnLeft();
-        }
-        if(turnRightPTI.buttonPressed){
-          TurnRight();
-        }
-        if(handbrakePTI.buttonPressed){
-          CancelInvoke("DecelerateCar");
-          deceleratingCar = false;
-          Handbrake();
-        }
-        if(!handbrakePTI.buttonPressed){
-          RecoverTraction();
-        }
-        if((!throttlePTI.buttonPressed && !reversePTI.buttonPressed)){
-          ThrottleOff();
-        }
-        if((!reversePTI.buttonPressed && !throttlePTI.buttonPressed) && !handbrakePTI.buttonPressed && !deceleratingCar){
-          InvokeRepeating("DecelerateCar", 0f, 0.1f);
-          deceleratingCar = true;
-        }
-        if(!turnLeftPTI.buttonPressed && !turnRightPTI.buttonPressed && steeringAxis != 0f){
-          ResetSteeringAngle();
-        }
-
-      }else{
-
-        var movement = move.ReadValue<Vector2>();
-        
-        if(movement.y > 0){
-          CancelInvoke("DecelerateCar");
-          deceleratingCar = false;
-          GoForward();
-        }
-        if(movement.y < 0){
-          CancelInvoke("DecelerateCar");
-          deceleratingCar = false;
-          GoReverse();
-        }
-
-        if(movement.x < 0){
-          TurnLeft();
-        }
-        if(movement.x > 0){
-          TurnRight();
-        }
-        if(jump.IsPressed()){
-          CancelInvoke("DecelerateCar");
-          deceleratingCar = false;
-          Handbrake();
-        }
-        if(jump.WasReleasedThisFrame()){
-          RecoverTraction();
-        }
-        if(Mathf.Approximately(movement.y, 0)){
-          ThrottleOff();
-        }
-        if(Mathf.Approximately(movement.y, 0) && !jump.IsPressed() && !deceleratingCar){
-          InvokeRepeating("DecelerateCar", 0f, 0.1f);
-          deceleratingCar = true;
-        }
-        if(Mathf.Approximately(movement.x, 0) && steeringAxis != 0f){
-          ResetSteeringAngle();
-        }
-
-      }
-
-
+      
       // We call the method AnimateWheelMeshes() in order to match the wheel collider movements with the 3D meshes of the wheels.
       AnimateWheelMeshes();
 
