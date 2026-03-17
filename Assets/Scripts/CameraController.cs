@@ -11,9 +11,16 @@ public sealed class CameraController: MonoBehaviour
 
     private void Update()
     {
+        if (target == null) return;
+        
         var targetPosition = target.position + offset;
 
         transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothing);
         transform.LookAt(target);
+    }
+
+    public void SetTarget(Transform newTarget)
+    {
+        target = newTarget;
     }
 }
